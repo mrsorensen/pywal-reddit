@@ -3,11 +3,19 @@ import json
 import urllib.request
 import os
 import sys
+from os.path import expanduser
 
 # PyWals alpha opacity setting
 walAlpha = 85
 # Where to store images
-dir = '/home/stranger/pywal-reddit/pics/'
+dir = '~/pywal-reddit/pics/'
+
+
+# END OF CONFIG --------------------
+
+# Create folder for pics
+if not os.path.exists(expanduser(dir)):
+    os.makedirs(expanduser(dir))
 
 # Check if first param is name of subreddit
 if len(sys.argv) <= 2:
@@ -47,7 +55,7 @@ imgurl = data['data']['children'][0]['data']['url']
 # Checks if image url is image
 if imgurl.lower().endswith(('.jpg', '.png')):
     # Full path to stored file
-    fullfilename = os.path.join(dir, os.path.basename(imgurl))
+    fullfilename = os.path.join(expanduser(dir), os.path.basename(imgurl))
     # Stores image 
     urllib.request.urlretrieve(imgurl, fullfilename)
     # Set as wallpaper
