@@ -36,7 +36,7 @@ if len(sys.argv) < 2:
     sys.exit()
 
 # Set lightmode if second parameter is set
-if len(args) >= 3:
+if len(sys.argv) >= 3:
     lightmode = '-l'
 else:
     lightmode = ''
