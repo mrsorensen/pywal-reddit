@@ -1,64 +1,87 @@
+#!/usr/bin/python
+
+# ------- USER CONFIG -----------
+
+# PyWals opacity option (set to 0 for full transparency or 100 for no transparency)
+alpha = 85
+# Where to storage downloaded images
+directory = '~/Pictures/Reddit-Wall/'
+# Set this to True/False to run neofetch --w3m with new wallpaper when done
+neofetch = True
+
+# ------- END CONFIG ------------
+
+
+
+
+# Imports
+from os.path import expanduser
 import requests
-import json
-import urllib.request
 import os
 import sys
-from os.path import expanduser
+import urllib.request
 
-# PyWals alpha opacity setting
-walAlpha = 85
-# Where to store images
-dir = '~/pywal-reddit/pics/'
+# Change ~/Folder to /home/yourusername/Folder
+directory = expanduser(directory)
 
+# Create folder for pictures if not already created
+if not os.path.exists(directory):
+    os.makedirs(directory)
 
-# END OF CONFIG --------------------
-
-# Create folder for pics
-if not os.path.exists(expanduser(dir)):
-    os.makedirs(expanduser(dir))
-
-# Check if first param is name of subreddit
-if len(sys.argv) <= 2:
-    print('Expects first parameter to be name of a subreddit')
-    print('Expects second parameter to be hour/day/week/month/year')
-    print('Example: python rwall.py earthporn day')
+# Exit if no subreddit as parameter
+if len(sys.argv) < 2:
+    print('First paramter should be name of a subreddit')
+    print('Ex: ./reddit-wall earthporn')
+    print('Enable lightmode with ./reddit-wall earthporn lightmode')
     sys.exit()
-else:
-    subreddit = sys.argv[1]
 
-# Hour, day, week etc
-if sys.argv[2] == 'hour':
-    toplist = 'hour'
-elif sys.argv[2] == 'day':
-    toplist = 'day'
-elif sys.argv[2] == 'week':
-    toplist = 'week'
-elif sys.argv[2] == 'month':
-    toplist = 'month'
+# Set lightmode if second parameter is set
+if len(args) >= 3:
+    lightmode = '-l'
 else:
-    toplist = 'year'
+    lightmode = ''
+
+# Set subreddit to first parameter
+subreddit = sys.argv[1]
 
 # URL to subreddits json
-URL = 'http://reddit.com/r/{}/top.json?t={}'.format(subreddit, toplist)
+URL = 'http://reddit.com/r/{}.json'.format(subreddit)
 
-# Store http request as json
-data = requests.get(URL, headers = {'User-agent':'rwall'}).json()
+# Store JSON
+data = requests.get(URL, headers = {'User-agent':'reddit-wall'}).json()
 
-# Check if valid subreddit
+# Validate subreddit
 if not data['data']['children']:
-    print('Subreddit not found')
+    print('r/{} not found'.format(subreddit))
+
+# Find first post with image attached in JSON response
+for post in data['data']['children']:
+    if post['data']['url'].lower().endswith(('.jpeg', '.jpg', '.png')):
+        imgURL = post['data']['url']
+        print('Preparing image {} ...'.format(imgURL))
+        break
+
+
+# Check if image was found in subreddit
+try:
+    imgURL
+except NameError:
+    print('No image found in r/{}'.format(subreddit))
     sys.exit()
 
-# Get first image from subreddit
-imgurl = data['data']['children'][0]['data']['url']
+# Path to locally store image
+pathToImg = os.path.join(directory, os.path.basename(imgURL))
 
-# Checks if image url is image
-if imgurl.lower().endswith(('.jpg', '.png')):
-    # Full path to stored file
-    fullfilename = os.path.join(expanduser(dir), os.path.basename(imgurl))
-    # Stores image 
-    urllib.request.urlretrieve(imgurl, fullfilename)
-    # Set as wallpaper
-    os.system('wal -a {} -i {} > /dev/null'.format(walAlpha, fullfilename))
+# Store image
+if urllib.request.urlretrieve(imgURL, pathToImg):
+    print('Image stored in {}'.format(pathToImg))
 else:
-    print('Couldn\'t get image')
+    print('There was an unexpected problem')
+
+# Set wallpaper
+os.system('wal {} -a {} -i {} > /dev/null'.format(lightmode, alpha, pathToImg))
+# Confirm new wallpaper
+if neofetch:
+    os.system('neofetch --w3m {}'.format(pathToImg))
+else:
+    print('New wallpaper is {}'.format(os.path.basename(pathToImg)))

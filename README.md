@@ -1,9 +1,14 @@
 # pywal-reddit
 Downloads images from reddit and sets them as wallpaper via pywal
 
+## Dependencies
+[PyWal](https://github.com/dylanaraps/pywal)
 ## How to use
-Run 
+Run (Dark mode)
 ```
-python pywal-reddit.py subreddit hour/day/week/month/year
-python pywal-reddit.py wallpapers month
+python pywal-reddit.py wallpapers
+```
+Run (Light mode)
+```
+python pywal-reddit.py wallpapers lightmode
 ```
