@@ -7,11 +7,11 @@ Downloads images from reddit and sets them as wallpaper via pywal
 ### From terminal
 Run (Dark mode)
 ```
-python pywal-reddit.py wallpapers
+python ~/pywal-reddit/pywal-reddit.py wallpapers
 ```
 Run (Light mode)
 ```
-python pywal-reddit.py wallpapers lightmode
+python ~/pywal-reddit/pywal-reddit.py wallpapers lightmode
 ```
 ### With rofi-menu
 ```
