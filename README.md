@@ -19,6 +19,6 @@ python ~/pywal-reddit/pywal-reddit.py wallpapers lightmode
 ```
 ### Bind rofi-menu i3 hotkey
 ```
-echo "bindsym \$mod+t exec --no-startup-id ~/pywal-reddit/rofi-menu.sh" >> testconf
+echo "bindsym \$mod+t exec --no-startup-id ~/pywal-reddit/rofi-menu.sh" >> ~/.config/i3/config
 ```
 Then reload i3 config
