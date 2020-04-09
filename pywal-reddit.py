@@ -8,6 +8,10 @@ alpha = 85
 directory = '~/Pictures/Reddit-Wall/'
 # Set this to True/False to run neofetch --w3m with new wallpaper when done
 neofetch = True
+# Min width of wallpaper
+min_width = 1920
+# Min height of wallpaper
+min_height = 1080
 
 # ------- END CONFIG ------------
 
@@ -21,13 +25,36 @@ import os
 import sys
 import urllib.request
 import re
+from PIL import ImageFile
+
+# Checks if image from URL is good res
+def isHD(URL, min_widht, min_height):
+    file = urllib.request.urlopen(URL)
+    size = file.headers.get("content-length")
+    if size: size = int(size)
+    p = ImageFile.Parser()
+    while 1:
+        data = file.read(1024)
+        if not data:
+            break
+        p.feed(data)
+        if p.image:
+            # return p.image.size
+            if p.image.size[0] >= min_width and p.image.size[1] >= min_height:
+                return True
+                break
+            else:
+                return False
+                break
+    file.close()
+    return False
 
 # Change ~/Folder to /home/yourusername/Folder
 directory = expanduser(directory)
 
 # Get name of current wallpaper
-curWall = os.popen('sed 1d "$HOME/.fehbg"').read()
-curWall = os.path.basename(re.search('''(?<=')\s*[^']+?\s*(?=')''', curWall).group())
+# curWall = os.popen('sed 1d "$HOME/.fehbg"').read()
+# curWall = os.path.basename(re.search('''(?<=')\s*[^']+?\s*(?=')''', curWall).group())
 
 # Create folder for pictures if not already created
 if not os.path.exists(directory):
@@ -65,9 +92,12 @@ for post in data['data']['children']:
         if os.path.isfile(os.path.join(directory, os.path.basename(post['data']['url']))):
             print('Skipping {}'.format(os.path.basename(post['data']['url'])))
         else:
-            imgURL = post['data']['url']
-            print('Preparing image {} ...'.format(imgURL))
-            break
+            if isHD(post['data']['url'], min_width, min_height):
+                imgURL = post['data']['url']
+                print('Preparing image {} ...'.format(imgURL))
+                break
+            else:
+                print('Skipping low res')
 
 # Check if image was found in subreddit
 try:
