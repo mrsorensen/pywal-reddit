@@ -1,6 +1,8 @@
 # pywal-reddit
 Downloads images from reddit and sets them as wallpaper via pywal
-
+## Screenshots
+![From terminal](https://github.com/mrsorensen/pywal-reddit/blob/master/screenshots/screen1.png)
+![With rofi-menu](https://github.com/mrsorensen/pywal-reddit/blob/master/screenshots/screen2.png)
 ## Dependencies
 [PyWal](https://github.com/dylanaraps/pywal)
 ## How to use
