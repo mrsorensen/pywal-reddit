@@ -88,16 +88,19 @@ if not data['data']['children']:
 
 # Find first post with image attached in JSON response
 for post in data['data']['children']:
-    if post['data']['url'].lower().endswith(('.jpeg', '.jpg', '.png')):
-        if os.path.isfile(os.path.join(directory, os.path.basename(post['data']['url']))):
-            print('Skipping {}'.format(os.path.basename(post['data']['url'])))
-        else:
-            if isHD(post['data']['url'], min_width, min_height):
-                imgURL = post['data']['url']
-                print('Preparing image {} ...'.format(imgURL))
-                break
+    if post['data']['url'].lower().startswith('https://i.redd.it'):
+        if post['data']['url'].lower().endswith(('.jpeg', '.jpg', '.png')):
+            if os.path.isfile(os.path.join(directory, os.path.basename(post['data']['url']))):
+                print('Skipping {}'.format(os.path.basename(post['data']['url'])))
             else:
-                print('Skipping low res')
+                if isHD(post['data']['url'], min_width, min_height):
+                    imgURL = post['data']['url']
+                    print('Preparing image {} ...'.format(imgURL))
+                    break
+                else:
+                    print('Skipping low res')
+    else:
+        print('Skipping unknown URL')
 
 # Check if image was found in subreddit
 try:
