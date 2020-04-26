@@ -8,6 +8,10 @@ pathToSubs=~/pywal-reddit/subreddits
 pathToScript=~/pywal-reddit/pywal-reddit.py
 # Maximum number of lines in rofi
 maxLines=10
+# Use pywalfox (true/false)
+pywalfox=true
+# Path to pywalfox.py script -- ignore if pywalfox=false
+pathToPywalfox=~/.daemon/pywalfox.py
 
 # ----- END OFCONFIG ------
 
@@ -39,8 +43,14 @@ light=$(rofi -dmenu -p "Lightmode y/n (default no)" -l 0)
 # Launch pywal-reddit with lightmode if user entered y lightmode prompt
 if [[ "$light" == "y" ]]; then
 	python $pathToScript $input lightmode
+	if [[ "$pywalfox" = true ]]; then
+		python $pathToPywalfox update
+	fi
 # Else launch pywal-reddit without lightmode
 else
 	python $pathToScript  $input
+	if [[ "$pywalfox" = true ]]; then
+		python $pathToPywalfox update
+	fi
 fi
 
